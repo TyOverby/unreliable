@@ -139,8 +139,10 @@ impl Sender {
         for _ in 0 .. self.replication {
             let mut chunk_count = 0;
             for chunk in message[..].chunks((self.datagram_length - MSG_PADDING) as usize) {
-                let mut v = Vec::new();
-                v.push_all(chunk);
+                let mut v = Vec::with_capacity(chunk.len());
+                for &byte in chunk {
+                    v.push(byte);
+                }
                 let chunk = MsgChunk(
                     MsgId(id), PieceNum(chunk_count + 1, (num_chunks + 1) as u16), v);
                 self.out_queue.push_back((chunk, addrs.clone()));

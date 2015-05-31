@@ -1,4 +1,3 @@
-#![feature(collections)]
 #![allow(unused)]
 
 extern crate bincode;

@@ -19,7 +19,7 @@ pub struct CompleteMessage(pub MsgId, pub Vec<u8>);
 struct MsgStage {
     this_id: MsgId,
     total_pieces: u16,
-    pieces: VecMap<MsgChunk>,
+    pieces: HashMap<usize, MsgChunk>,
     size: usize
 }
 
@@ -126,7 +126,7 @@ impl MsgStage {
         let mut stage = MsgStage {
             this_id: starter.0,
             total_pieces: out_of,
-            pieces: VecMap::with_capacity(out_of as usize),
+            pieces: HashMap::with_capacity(out_of as usize),
             size: 0
         };
 
@@ -158,7 +158,9 @@ impl MsgStage {
         let mut v = Vec::with_capacity(size);
 
         for (_, &mut MsgChunk(_, _, ref mut bytes)) in self.pieces.iter_mut() {
-            v.append(bytes);
+            for &byte in bytes.iter() {
+                v.push(byte);
+            }
         }
 
         CompleteMessage(self.this_id, v)
